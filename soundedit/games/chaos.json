@@ -1,9 +1,9 @@
 {
 	"sys_block_entries": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input_duration", "type": "float"},
-			{ "name": "input_active", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0" },
+			{ "name": "input_duration", "type": "float", "default": "0.0" },
+			{ "name": "input_active", "type": "float", "default": "1.0" }
 		],
 		"outputs": [
 		],
@@ -11,8 +11,8 @@
 	},
 	"set_convar": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input", "type": "float", "default": "0.0" }
 		],
 		"outputs": [
 		],
@@ -20,7 +20,7 @@
 	},
 	"get_convar": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -29,7 +29,7 @@
 	},
 	"get_dashboard": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -38,8 +38,8 @@
 	},
 	"math_delta": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input", "type": "float", "default": "0.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -48,9 +48,9 @@
 	},
 	"calc_distant_dsp": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input_distance", "type": "float"},
-			{ "name": "input_level", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input_distance", "type": "float", "default": "1.0"},
+			{ "name": "input_level", "type": "float", "default": "65.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -59,7 +59,7 @@
 	},
 	"get_entry_time": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"}
 		],
 		"outputs": [
 			{ "name": "output_entry_elapsed", "type": "float"},
@@ -71,8 +71,8 @@
 	},
 	"game_entity_info": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input_entity_index", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input_entity_index", "type": "float", "default": "0.0" }
 		],
 		"outputs": [
 			{ "name": "output_position", "type": "vec3"},
@@ -91,9 +91,9 @@
 	},
 	"calc_falloff": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input_distance", "type": "float"},
-			{ "name": "input_level", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0" },
+			{ "name": "input_distance", "type": "float", "default": "1.0" },
+			{ "name": "input_level", "type": "float", "default": "1.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -102,13 +102,13 @@
 	},
 	"calc_falloff_curve": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input_distance", "type": "float"},
-			{ "name": "input_curve_amount", "type": "float"},
-			{ "name": "input_min", "type": "float"},
-			{ "name": "input_max", "type": "float"},
-			{ "name": "input_atten", "type": "float"},
-			{ "name": "input_volume_min", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input_distance", "type": "float", "default": "0.0" },
+			{ "name": "input_curve_amount", "type": "float", "default": "0.0" },
+			{ "name": "input_min", "type": "float", "default": "36.0" },
+			{ "name": "input_max", "type": "float", "default": "360.0" },
+			{ "name": "input_atten", "type": "float", "default": "360.0"},
+			{ "name": "input_volume_min", "type": "float", "default": "0.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -117,9 +117,9 @@
 	},
 	"math_float_filter": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input", "type": "float"},
-			{ "name": "input_max_velocity", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input", "type": "float", "default": "0.0" },
+			{ "name": "input_max_velocity", "type": "float", "default": "0.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -128,9 +128,9 @@
 	},
 	"iterate_merge_speakers": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input_max_iterations", "type": "float"},
-			{ "name": "input", "type": "speakers"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input_max_iterations", "type": "float", "default": "0.0"},
+			{ "name": "input", "type": "speakers", "default": "0.0"}
 		],
 		"outputs": [
 			{ "name": "output_index", "type": "float"},
@@ -140,7 +140,7 @@
 	},
 	"get_map_name": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -149,8 +149,8 @@
 	},
 	"math_func1": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input1", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input1", "type": "float", "default": "0.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -159,9 +159,9 @@
 	},
 	"math_float": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input1", "type": "float"},
-			{ "name": "input2", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input1", "type": "float", "default": "0.0"},
+			{ "name": "input2", "type": "float", "default": "0.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -170,9 +170,9 @@
 	},
 	"math_vec3": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input1", "type": "vec3"},
-			{ "name": "input2", "type": "vec3"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input1", "type": "vec3", "default": "0.0 0.0 0.0"},
+			{ "name": "input2", "type": "vec3", "default": "0.0 0.0 0.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "vec3"}
@@ -181,9 +181,9 @@
 	},
 	"math_speakers": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input1", "type": "speakers"},
-			{ "name": "input2", "type": "speakers"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input1", "type": "speakers", "default": "0.0"},
+			{ "name": "input2", "type": "speakers", "default": "0.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "speakers"}
@@ -192,19 +192,19 @@
 	},
 	"math_float_accumulate12": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input1", "type": "float"},
-			{ "name": "input2", "type": "float"},
-			{ "name": "input3", "type": "float"},
-			{ "name": "input4", "type": "float"},
-			{ "name": "input5", "type": "float"},
-			{ "name": "input6", "type": "float"},
-			{ "name": "input7", "type": "float"},
-			{ "name": "input8", "type": "float"},
-			{ "name": "input9", "type": "float"},
-			{ "name": "input10", "type": "float"},
-			{ "name": "input11", "type": "float"},
-			{ "name": "input12", "type": "float"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input1", "type": "float", "default": "1.0" },
+			{ "name": "input2", "type": "float", "default": "1.0" },
+			{ "name": "input3", "type": "float", "default": "1.0" },
+			{ "name": "input4", "type": "float", "default": "1.0" },
+			{ "name": "input5", "type": "float", "default": "1.0" },
+			{ "name": "input6", "type": "float", "default": "1.0" },
+			{ "name": "input7", "type": "float", "default": "1.0" },
+			{ "name": "input8", "type": "float", "default": "1.0" },
+			{ "name": "input9", "type": "float", "default": "1.0" },
+			{ "name": "input10", "type": "float", "default": "1.0" },
+			{ "name": "input11", "type": "float", "default": "1.0" },
+			{ "name": "input12", "type": "float", "default": "1.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -213,8 +213,8 @@
 	},
 	"calc_source_distance": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input_position", "type": "vec3"}
+			{ "name": "input_execute", "type": "float", "default": "1.0"},
+			{ "name": "input_position", "type": "vec3", "default":"0.0 0.0 0.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
@@ -223,8 +223,8 @@
 	},
 	"calc_angles_facing": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
-			{ "name": "input_angles", "type": "vec3"}
+			{ "name": "input_execute", "type": "float", "default": "1.0" },
+			{ "name": "input_angles", "type": "vec3", "default": "0.0 0.0 0.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}

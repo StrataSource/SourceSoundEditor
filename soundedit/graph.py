@@ -36,6 +36,12 @@ class SoundOperatorGraph(NodeGraph):
 
 
 	def from_dict(self, opstack: dict):
+		"""
+		Load an operator stack from a dict
+		
+		Args:
+			dict: The operator stack to load.
+		"""
 		# Pass 1: create all nodes
 		for node in opstack.keys():
 			self._create_node(node, opstack)
@@ -69,6 +75,10 @@ class SoundOperatorGraph(NodeGraph):
 			port: Port = n.get_input_port(inpName)
 			if value.startswith('@'):
 				continue
+			
+			n.set_input_const(inpName, value)
+			
+			continue
 			
 			constNodeType = 'FloatConstNode'
 			if input['type'] == 'vec3':

@@ -3,7 +3,7 @@ from NodeGraphQt import (
 	BaseNode, Port
 )
 from NodeGraphQt.widgets.node_widgets import (
-	NodeLineEdit
+	NodeLineEdit, NodeBaseWidget
 )
 
 from PySide2.QtWidgets import (
@@ -51,6 +51,38 @@ class OperatorNode(BaseNode):
 				name=name,
 				color=manifest.color_for_type(i['type'])
 			)
+			self.add_text_input(
+				name=name,
+				label=name,
+				tab=name,
+				text='1.0' # TODO: Defaults!!!
+			)
+
+
+	def on_input_connected(self, in_port: Port, out_port: Port):
+		w: QLineEdit = self.get_widget(in_port.name()).get_custom_widget()
+		w.setDisabled(True)
+		return super().on_input_connected(in_port, out_port)
+
+
+	def on_input_disconnected(self, in_port, out_port):
+		w: QLineEdit = self.get_widget(in_port.name()).get_custom_widget()
+		w.setDisabled(False)
+		return super().on_input_disconnected(in_port, out_port)
+
+
+	def set_input_const(self, input: str, value: str):
+		"""
+		Set an input constant for the specified input
+		This will set the line edit's value
+		
+		Args:
+			str: Input name
+			str: Value text
+		"""
+		w: QLineEdit = self.get_widget(input).get_custom_widget()
+		w.setText(value)
+
 
 
 	def get_input_port(self, name: str) -> Port:
@@ -62,6 +94,14 @@ class OperatorNode(BaseNode):
 
 
 	def __new__(metacls, typ: str = None):
+		"""
+		Returns new instance of OperatorNode.
+		Generates a new metatype with a unique name so we can use this single class
+		for multiple node types, dynamically added via the manifest.
+		
+		Args:
+			str: The type of the operator node
+		"""
 		if typ is not None:
 			# Generate new type
 			metacls = type(f'Operator_{typ}', (OperatorNode,), {
