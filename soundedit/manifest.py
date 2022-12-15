@@ -24,6 +24,14 @@ class Manifest:
 		return self.nodes
 
 
+	def get_input_desc(self, type: str) -> list[dict]:
+		return self.nodes[type]['inputs']
+		
+
+	def get_output_desc(self, type: str) -> list[dict]:
+		return self.nodes[type]['outputs']
+
+
 				
 GAMES = {
 	'chaos': Manifest(os.path.dirname(__file__) + '/games/chaos.json')

@@ -190,8 +190,12 @@ class SoundEdit(QMainWindow):
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	
+
 	window = SoundEdit()
+	
+	if len(sys.argv) > 1:
+		window.load_operator_stack(sys.argv[1])
+	
 	window.show()
 	
 	app.exec_()
