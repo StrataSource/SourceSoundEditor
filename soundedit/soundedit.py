@@ -185,17 +185,3 @@ class SoundEdit(QMainWindow):
 	"""
 	def _on_exit(self, checked: bool):
 		QApplication.exit(0)
-
-
-
-if __name__ == '__main__':
-	app = QApplication(sys.argv)
-
-	window = SoundEdit()
-	
-	if len(sys.argv) > 1:
-		window.load_operator_stack(sys.argv[1])
-	
-	window.show()
-	
-	app.exec_()

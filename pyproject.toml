@@ -1,0 +1,18 @@
+[build-system]
+requires = [
+    "setuptools>=42"
+]
+
+build-backend = "setuptools.build_meta"
+
+[project]
+name="SoundEdit"
+version="0.0.1"
+requires-python=">=3.10"
+
+dependencies = [
+    "vdf>=3.4",
+    "PySide2",
+    "NodeGraphQt @ git+https://github.com/jchanvfx/NodeGraphQt.git"
+]
+
