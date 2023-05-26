@@ -1,0 +1,19 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+	"setuptools>=45",
+	"NodeGraphQt>=0.6.1",
+	"PySide2>=5.13.2",
+	"vdf>=3.4"
+]
+
+[project]
+name = "SourceSoundEditor"
+description = "Sound Operator Stacks editor for Strata Source"
+requires-python = ">=3.10"
+version = "0.1.0"
+
+
+[project.scripts]
+soundedit = "soundedit.__main__:main"
+

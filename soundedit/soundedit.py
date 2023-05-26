@@ -6,7 +6,7 @@ import vdf
 import sys
 
 from typing import Tuple
-from PySide2 import Qt, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 from PySide2.QtWidgets import (
 	QApplication, QWidget, QMainWindow,
 	QFileDialog, QTreeWidget, QTreeWidgetItem,
@@ -186,16 +186,3 @@ class SoundEdit(QMainWindow):
 	def _on_exit(self, checked: bool):
 		QApplication.exit(0)
 
-
-
-if __name__ == '__main__':
-	app = QApplication(sys.argv)
-
-	window = SoundEdit()
-	
-	if len(sys.argv) > 1:
-		window.load_operator_stack(sys.argv[1])
-	
-	window.show()
-	
-	app.exec_()
