@@ -1,44 +1,58 @@
 {
+  "__base": {
+    "inputs": [
+      {"name": "input_execute", "type": "float", "default": "1.0"}
+    ],
+    "keyvalues": [
+      {"name": "execute_once", "type": "bool", "default": "false"}
+    ]
+  },
 	"sys_block_entries": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0" },
 			{ "name": "input_duration", "type": "float", "default": "0.0" },
 			{ "name": "input_active", "type": "float", "default": "1.0" }
 		],
 		"outputs": [
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "match_entry", "type": "implicit_bool", "default": "true"},
+      {"name": "match_entity", "type": "bool", "default": "true"},
+      {"name": "match_channel", "type": "bool", "default": "true"},
+      {"name": "match_substring", "type": "bool", "default": "true"}
+    ]
 	},
 	"set_convar": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input", "type": "float", "default": "0.0" }
 		],
 		"outputs": [
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "convar", "type": "string", "default": ""}
+    ]
 	},
 	"get_convar": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "convar", "type": "string", "default": ""}
+    ]
 	},
 	"get_dashboard": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "ds_type", "type": "enum", "choices": ["music"], "default": "music"}
+    ]
 	},
 	"math_delta": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input", "type": "float", "default": "0.0" }
 		],
 		"outputs": [
@@ -48,7 +62,6 @@
 	},
 	"calc_distant_dsp": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input_distance", "type": "float", "default": "1.0"},
 			{ "name": "input_level", "type": "float", "default": "65.0" }
 		],
@@ -59,7 +72,6 @@
 	},
 	"get_entry_time": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"}
 		],
 		"outputs": [
 			{ "name": "output_entry_elapsed", "type": "float"},
@@ -67,11 +79,12 @@
 			{ "name": "output_stop_elapsed", "type": "float"},
 			{ "name": "output_sound_duration", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "entry", "type": "string", "default": ""}
+    ]
 	},
 	"game_entity_info": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input_entity_index", "type": "float", "default": "0.0" }
 		],
 		"outputs": [
@@ -91,7 +104,6 @@
 	},
 	"calc_falloff": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0" },
 			{ "name": "input_distance", "type": "float", "default": "1.0" },
 			{ "name": "input_level", "type": "float", "default": "1.0" }
 		],
@@ -102,7 +114,6 @@
 	},
 	"calc_falloff_curve": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input_distance", "type": "float", "default": "0.0" },
 			{ "name": "input_curve_amount", "type": "float", "default": "0.0" },
 			{ "name": "input_min", "type": "float", "default": "36.0" },
@@ -117,18 +128,18 @@
 	},
 	"math_float_filter": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input", "type": "float", "default": "0.0" },
 			{ "name": "input_max_velocity", "type": "float", "default": "0.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      
+    ]
 	},
 	"iterate_merge_speakers": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input_max_iterations", "type": "float", "default": "0.0"},
 			{ "name": "input", "type": "speakers", "default": "0.0"}
 		],
@@ -136,63 +147,96 @@
 			{ "name": "output_index", "type": "float"},
 			{ "name": "output", "type": "speakers"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "iterate_operator", "type": "string", "default": ""}
+    ]
 	},
 	"get_map_name": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "map_name", "type": "string", "default": ""}
+    ]
 	},
 	"math_func1": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input1", "type": "float", "default": "0.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "normalize_trig", "type": "bool", "default": "false"},
+      {"name": "function", "type": "enum", "choices": [
+        "none", "sin", "asin", "cos", "acos", "tan", "atan", "sinh", "asinh",
+        "cosh", "acosh", "tanh", "atanh", "exp", "expm1", "exp2", "log", "log2",
+        "log1p", "log10", "logb", "fabs", "sqrt", "erf", "erfc", "gamma", "lgamma",
+        "ceil", "floor", "rint", "nearbyint", "rintol", "round", "roundtol", "trunc"
+      ], "default": "none"}
+    ]
 	},
 	"math_float": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input1", "type": "float", "default": "0.0"},
 			{ "name": "input2", "type": "float", "default": "0.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "apply", "type": "enum", "choices": [
+        "none", "set", "add", "sub", "mult", "div", "mod",
+        "max", "min", "invert", "greater_than", "less_than",
+        "greater_than_or_equal", "less_than_or_equal",
+        "equals", "not_equal", "invert_scale", "pow"
+      ], "default": "none"}
+    ]
 	},
 	"math_vec3": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input1", "type": "vec3", "default": "0.0 0.0 0.0"},
 			{ "name": "input2", "type": "vec3", "default": "0.0 0.0 0.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "vec3"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "apply", "type": "enum", "choices": [
+        "none", "set", "add", "sub", "mult", "div", "mod",
+        "max", "min", "invert", "greater_than", "less_than",
+        "greater_than_or_equal", "less_than_or_equal",
+        "equals", "not_equal", "invert_scale", "pow"
+      ], "default": "none"}
+    ]
 	},
 	"math_speakers": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input1", "type": "speakers", "default": "0.0"},
 			{ "name": "input2", "type": "speakers", "default": "0.0"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "speakers"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "apply", "type": "enum", "choices": [
+        "none", "set", "add", "sub", "mult", "div", "mod",
+        "max", "min", "invert", "greater_than", "less_than",
+        "greater_than_or_equal", "less_than_or_equal",
+        "equals", "not_equal", "invert_scale", "pow"
+      ], "default": "none"},
+      {"name": "left_front", "type": "interval", "default": "0,0"},
+      {"name": "right_front", "type": "interval", "default": "0,0"},
+      {"name": "left_rear", "type": "interval", "default": "0,0"},
+      {"name": "right_rear", "type": "interval", "default": "0,0"},
+      {"name": "center", "type": "interval", "default": "0,0"},
+      {"name": "lfe", "type": "interval", "default": "0,0"}
+    ]
 	},
 	"math_float_accumulate12": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input1", "type": "float", "default": "1.0" },
 			{ "name": "input2", "type": "float", "default": "1.0" },
 			{ "name": "input3", "type": "float", "default": "1.0" },
@@ -209,21 +253,29 @@
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "apply", "type": "enum", "choices": [
+        "none", "set", "add", "sub", "mult", "div", "mod",
+        "max", "min", "invert", "greater_than", "less_than",
+        "greater_than_or_equal", "less_than_or_equal",
+        "equals", "not_equal", "invert_scale", "pow"
+      ], "default": "none"}
+    ]
 	},
 	"calc_source_distance": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0"},
 			{ "name": "input_position", "type": "vec3", "default":"0.0 0.0 0.0" }
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "in2D", "type": "bool", "default": "false"},
+      {"name": "force_not_player_sound", "type": "bool", "default": "false"}
+    ]
 	},
 	"calc_angles_facing": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float", "default": "1.0" },
 			{ "name": "input_angles", "type": "vec3", "default": "0.0 0.0 0.0" }
 		],
 		"outputs": [
@@ -233,7 +285,6 @@
 	},
 	"math_remap_float": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input", "type": "float"},
 			{ "name": "input_min", "type": "float"},
 			{ "name": "input_max", "type": "float"},
@@ -243,11 +294,13 @@
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "clamp_range", "type": "bool", "default": "true"},
+      {"name": "default_to_max", "type": "bool", "default": "true"}
+    ]
 	},
 	"math_curve_2d_4knot": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input", "type": "float"},
 			{ "name": "input_X1", "type": "float"},
 			{ "name": "input_Y1", "type": "float"},
@@ -261,11 +314,12 @@
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "curve_type", "type": "enum", "choices": [ "step", "linear" ], "default": "step"}
+    ]
 	},
 	"math_random": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input_min", "type": "float"},
 			{ "name": "input_max", "type": "float"},
 			{ "name": "input_seed", "type": "float"}
@@ -273,11 +327,12 @@
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "round_to_int", "type": "bool", "default": "false"}
+    ]
 	},
 	"math_logic_switch": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input1", "type": "float"},
 			{ "name": "input2", "type": "float"},
 			{ "name": "input_switch", "type": "float"}
@@ -289,27 +344,33 @@
 	},
 	"get_soundmixer": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
 		],
 		"outputs": [
 			{ "name": "output_volume", "type": "float"},
 			{ "name": "output_level", "type": "float"},
 			{ "name": "output_dsp", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "set_mixgroup_to_channel", "type": "bool", "default": "false"},
+      {"name": "mixgroup", "type": "string", "default": ""}
+    ]
 	},
 	"sys_mixlayer": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input", "type": "float"}
 		],
 		"outputs": [
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "field", "type": "enum", "choices": [
+        "volume", "level", "dsp", "solo", "mute", "none"
+      ], "default": "none"},
+      {"name": "mixlayer", "type": "string", "default": ""},
+      {"name": "mixgroup", "type": "string", "default": ""}
+    ]
 	},
 	"calc_occlusion": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input_trace_interval", "type": "float"},
 			{ "name": "input_scalar", "type": "float"},
 			{ "name": "input_position", "type": "vec3"}
@@ -317,61 +378,74 @@
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "occlusio_db_loss", "type": "float", "default": "-2.70"}
+    ]
 	},
 	"set_opvar_float": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input", "type": "float"}
 		],
 		"outputs": [
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "opvar", "type": "string", "default": ""}
+    ]
 	},
 	"get_opvar_float": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"},
 			{ "name": "output_opvar_exists", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "opvar", "type": "string", "default": ""}
+    ]
 	},
 	"increment_opvar_float": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input", "type": "float"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"},
 			{ "name": "output_opvar_exists", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "opvar", "type": "string", "default": ""}
+    ]
 	},
 	"sys_output": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input_speakers", "type": "speakers"},
 			{ "name": "input_vec3", "type": "vec3"},
 			{ "name": "input_float", "type": "float"}
 		],
 		"outputs": [
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "output", "type": "enum", "choices": [
+        "none", "volume", "dsp", "position", "speakers", "facing", "distvar",
+        "pitch", "delay", "stop_hold", "mixlayer_trigger", "save_restore",
+        "block_start", "phonon_xfade"
+      ], "default": "none"}
+    ]
 	},
 	"sys_platform": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
 		],
 		"outputs": [
 			{ "name": "output", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "pc", "type": "implicit_bool", "default": ""},
+      {"name": "osx", "type": "implicit_bool", "default": ""},
+      {"name": "ps3", "type": "implicit_bool", "default": ""},
+      {"name": "x360", "type": "implicit_bool", "default": ""}
+    ]
 	},
 	"game_view_info": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input_source_index", "type": "float"}
 		],
 		"outputs": [
@@ -391,7 +465,6 @@
 	},
 	"util_pos_vec8": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input_index", "type": "float"},
 			{ "name": "input_entry_count", "type": "float"},
 			{ "name": "input_position_0", "type": "vec3"},
@@ -411,7 +484,6 @@
 	},
 	"get_source_info": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input_source_index", "type": "float"}
 		],
 		"outputs": [
@@ -424,11 +496,15 @@
 			{ "name": "output_pitch", "type": "float"},
 			{ "name": "output_source_count", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "source", "type": "enum", "choices": [
+        "none", "emitter", "entity"
+      ], "default": "none"},
+      {"name": "game_multi_origin", "type": "bool", "default": "true"}
+    ]
 	},
 	"calc_spatialize_speakers": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input_radius", "type": "float"},
 			{ "name": "input_radius_max", "type": "float"},
 			{ "name": "input_radius_min", "type": "float"},
@@ -446,17 +522,17 @@
 	},
 	"sys_start_entry": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input_start", "type": "float"},
 			{ "name": "input_start_delay", "type": "float"}
 		],
 		"outputs": [
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "entry_name", "type": "string", "default": ""}
+    ]
 	},
 	"sys_stop_entries": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input_max_entries", "type": "float"},
 			{ "name": "input_stop_delay", "type": "float"}
 		],
@@ -464,11 +540,21 @@
 			{ "name": "output_entries_matching", "type": "float"},
 			{ "name": "output_this_matches_index", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "match_this_entry", "type": "bool", "default": "false"},
+      {"name": "match_entry", "type": "string", "default": ""},
+      {"name": "match_sound", "type": "string", "default": ""},
+      {"name": "match_entity", "type": "bool", "default": "false"},
+      {"name": "match_channel", "type": "bool", "default": "false"},
+      {"name": "match_substring", "type": "bool", "default": "false"},
+      {"name": "stop_oldest", "type": "bool", "default": "true"},
+      {"name": "stop_this_entry", "type": "bool", "default": "false"},
+      {"name": "invert_match", "type": "bool", "default": "false"}
+      
+    ]
 	},
 	"get_sys_time": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
 		],
 		"outputs": [
 			{ "name": "output_client_time", "type": "float"},
@@ -478,7 +564,6 @@
 	},
 	"get_track_syncpoint": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input_min_time_to_next_sync", "type": "float"},
 			{ "name": "input_max_time_to_next_sync", "type": "float"}
 		],
@@ -487,37 +572,47 @@
 			{ "name": "output_last_syncpoint", "type": "float"},
 			{ "name": "output_time_to_next_syncpoint", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "match_entry", "type": "string", "default": ""},
+      {"name": "syncpoint_list", "type": "string", "default": ""},
+      {"name": "this_entry_syncpoints", "type": "bool", "default": "false"},
+      {"name": "subtract_min_time_from_next", "type": "bool", "default": "true"},
+      {"name": "subtract_min_time_from_last", "type": "bool", "default": "false"},
+      {"name": "subtract_first_from_last", "type": "bool", "default": "true"}
+    ]
 	},
 	"track_queue": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
 		],
 		"outputs": [
 			{ "name": "output_time_to_next_syncpoint", "type": "float"},
 			{ "name": "output_time_to_start", "type": "float"}
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "syncpoint_list", "type": "string", "default": ""}
+    ]
 	},
 	"track_update": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
 		],
 		"outputs": [
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "autoqueue_entry_at_end_point", "type": "string", "default": ""},
+      {"name": "stop_channel_on_track", "type": "bool", "default": "true"}
+    ]
 	},
 	"track_stop": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"}
 		],
 		"outputs": [
 		],
-		"keyvalues": []
+		"keyvalues": [
+      {"name": "track_name", "type": "string", "default": ""}
+    ]
 	},
 	"util_print_float": {
 		"inputs": [
-			{ "name": "input_execute", "type": "float"},
 			{ "name": "input", "type": "float"}
 		],
 		"outputs": [
