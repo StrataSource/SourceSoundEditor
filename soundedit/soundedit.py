@@ -185,4 +185,3 @@ class SoundEdit(QMainWindow):
 	"""
 	def _on_exit(self, checked: bool):
 		QApplication.exit(0)
-
