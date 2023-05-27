@@ -15,6 +15,7 @@ from PySide2.QtGui import (
 
 from . import manifest
 from .utils import str_bool
+from .types import NodeKeyValueType
 
 
 class OperatorNode(BaseNode):
@@ -28,13 +29,13 @@ class OperatorNode(BaseNode):
     __identifier__ = 'io.soundedit.operators'
 
 
-    def __init__(self, type: str = None):
+    def __init__(self):
         super().__init__()
         self.in_ports = {}
         self.out_ports = {}
 
 
-    def _create_input_widget(self, kv: dict):
+    def _create_input_widget(self, kv: NodeKeyValueType):
         """
         Create input widget for specified type
         
@@ -173,7 +174,7 @@ class OperatorNode(BaseNode):
         return self.out_ports[name]
 
 
-    def __new__(metacls, typ: str = None):
+    def __new__(metacls, typ: str|None = None):
         """
         Returns new instance of OperatorNode.
         Generates a new metatype with a unique name so we can use this single class
