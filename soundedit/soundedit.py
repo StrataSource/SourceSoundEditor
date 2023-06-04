@@ -6,6 +6,7 @@ import vdf
 import sys
 
 from typing import Tuple
+from vdf import VDFDict
 from PySide2 import QtCore, QtWidgets
 from PySide2.QtWidgets import (
     QApplication, QWidget, QMainWindow,
@@ -30,7 +31,7 @@ class SoundEdit(QMainWindow):
     """
     def __init__(self):
         super().__init__()
-        self.data = {}
+        self.data: VDFDict = {}
         self.graphs = {}
         self._setup_ui()
 
@@ -41,7 +42,7 @@ class SoundEdit(QMainWindow):
     def load_operator_stack(self, file: str) -> Tuple[bool,str]:
         try:
             with open(file, 'r') as fp:
-                return (self._load_operator_stack(vdf.load(fp)), '')
+                return (self._load_operator_stack(vdf.load(fp, mapper=VDFDict)), '')
         except Exception as e:
             return (False, str(e))
 
@@ -61,8 +62,8 @@ class SoundEdit(QMainWindow):
             self.graphs[name].widget.raise_()
             return True
         graph = SoundOperatorGraph(self)
-        stack = self.data['start_stacks' if type == StackType.Start else 'update_stacks'][name]
-        graph.from_dict(stack)
+        stacks = self.data['start_stacks' if type == StackType.Start else 'update_stacks']
+        graph.from_dict(stacks[name], stacks)
         
         w = QWidget(self)
         w.setLayout(QHBoxLayout())
@@ -79,7 +80,7 @@ class SoundEdit(QMainWindow):
         pass
 
     
-    def _load_operator_stack(self, data: dict) -> bool:
+    def _load_operator_stack(self, data: VDFDict) -> bool:
         self.data = data
         self._populate_list()
         return True

@@ -5,6 +5,8 @@
     ],
     "keyvalues": [
       {"name": "execute_once", "type": "bool", "default": "false"}
+    ],
+    "outputs": [
     ]
   },
 	"sys_block_entries": {

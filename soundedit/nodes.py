@@ -29,10 +29,11 @@ class OperatorNode(BaseNode):
     __identifier__ = 'io.soundedit.operators'
 
 
-    def __init__(self):
+    def __init__(self, type: str|None = None):
         super().__init__()
         self.in_ports = {}
         self.out_ports = {}
+        self.type = type
 
 
     def _create_input_widget(self, kv: NodeKeyValueType):

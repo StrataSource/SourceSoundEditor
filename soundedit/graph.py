@@ -11,6 +11,8 @@ from PySide2.QtWidgets import (
     QTabWidget, QHBoxLayout
 )
 
+from vdf import VDFDict
+
 from . import manifest, nodes, types
 from . nodes import (
     OperatorNode, FloatConstNode
@@ -40,7 +42,7 @@ class SoundOperatorGraph(NodeGraph):
         )
 
 
-    def from_dict(self, opstack: dict):
+    def from_dict(self, opstack: VDFDict, all_opstacks: VDFDict):
         """
         Load an operator stack from a dict
         
@@ -49,19 +51,38 @@ class SoundOperatorGraph(NodeGraph):
         opstack : dict
             The operator stack to load.
         """
+        # Pass 0: find all import_stacks
+        # TODO: Handling for this should be improved. import_stack's are a bit funny, they basically merge keyvalues sections
+        #  for now we're just merging with no regard for the output. Not sure how else you'd represent this in the graph anyway
+        for imp in opstack.get_all_for('import_stack'):
+            data: VDFDict = all_opstacks[imp]
+            for key in data.keys():
+                if key in opstack:
+                    opstack[key] = (0,data)
+                else:
+                    opstack[key] = data
+        print(opstack)
+
         # Pass 1: create all nodes
         for node in opstack.keys():
-            self._create_node(node, opstack)
+            value = opstack[node]
+            if isinstance(value, dict):
+                self._create_node(node, opstack)
+            elif isinstance(value, str):
+                print('WARNING: unhandled import_stack operator')
+                print(f'{node} = {opstack[node]}')
 
         # Pass 2: resolve connections
         for node in opstack.keys():
-            self._resolve(node, opstack)
+            value = opstack[node]
+            if isinstance(value, dict):
+                self._resolve(node, opstack)
 
         self.auto_layout_nodes()
 
 
 
-    def _create_node(self, nodeName: str, opstack: dict):
+    def _create_node(self, nodeName: str, opstack: VDFDict):
         """
         Creates a new named node from existing operator stack data
         
@@ -69,7 +90,7 @@ class SoundOperatorGraph(NodeGraph):
         ----------
         nodeName : str
             Name of the node
-        opstack : dict
+        opstack : VDFDict
             Dictionary of operator stack data
         """
         node = opstack[nodeName]
@@ -102,7 +123,7 @@ class SoundOperatorGraph(NodeGraph):
             n.set_widget_value(kv['name'], node[kv['name']])
 
 
-    def _resolve(self, nodeName: str, opstack: dict):
+    def _resolve(self, nodeName: str, opstack: VDFDict):
         """
         Resolves inter-node references
         
@@ -110,7 +131,7 @@ class SoundOperatorGraph(NodeGraph):
         ----------
         nodeName : str
             Name of the node
-        opstack : dict
+        opstack : VDFDict
             Dictionary of operator stack data
         """
         operator = opstack[nodeName]['operator']
