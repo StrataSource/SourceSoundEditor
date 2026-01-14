@@ -7,14 +7,14 @@ import sys
 
 from typing import Tuple
 from vdf import VDFDict
-from PySide2 import QtCore, QtWidgets
-from PySide2.QtWidgets import (
+from PySide6 import QtCore, QtWidgets
+from PySide6.QtWidgets import (
     QApplication, QWidget, QMainWindow,
     QFileDialog, QTreeWidget, QTreeWidgetItem,
     QDockWidget, QMessageBox, QTabWidget,
     QHBoxLayout
 )
-from PySide2.QtCore import Qt
+from PySide6.QtCore import Qt
 from NodeGraphQt import (
     NodesPaletteWidget
 )

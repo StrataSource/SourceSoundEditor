@@ -1,3 +1,3 @@
 NodeGraphQt
-PySide2
+PySide6
 vdf

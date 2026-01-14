@@ -7,7 +7,7 @@ Defines a visual representation of a sound operator stack
 from NodeGraphQt import (
     NodeGraph, BaseNode, Port
 )
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QTabWidget, QHBoxLayout
 )
 

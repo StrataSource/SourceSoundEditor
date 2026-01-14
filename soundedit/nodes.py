@@ -6,10 +6,10 @@ from NodeGraphQt.widgets.node_widgets import (
     NodeLineEdit, NodeBaseWidget, NodeComboBox, NodeCheckBox
 )
 
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QLineEdit
 )
-from PySide2.QtGui import (
+from PySide6.QtGui import (
     QDoubleValidator
 )
 
