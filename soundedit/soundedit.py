@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
     QDockWidget, QMessageBox, QTabWidget,
     QHBoxLayout
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSettings
 from NodeGraphQt import (
     NodesPaletteWidget
 )
@@ -177,12 +177,16 @@ class SoundEdit(QMainWindow):
     Called when we want to open a file
     """
     def _on_open(self, checked: bool):
+        s = QSettings()
         fileName, _ = QFileDialog.getOpenFileName(
-            self, 'Open operator stack', os.getcwd(),
-            'Sound Operator Stacks (*.txt *.sndstack)'
+            self, 'Open operator stack', s.value('FileOpenLastDir', os.getcwd()),
+            'Sound Operator Stacks (sound_operator_stacks.txt *.sndstack)'
         )
         if len(fileName) == 0:
             return
+
+        s.setValue('FileOpenLastDir', os.path.dirname(fileName))
+
         success,err = self.load_operator_stack(fileName)
         if not success:
             QMessageBox.warning(self, 'Could not load file',
