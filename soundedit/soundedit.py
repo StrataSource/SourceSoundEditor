@@ -33,6 +33,8 @@ class SoundEdit(QMainWindow):
         super().__init__()
         self.data: VDFDict = {}
         self.graphs = {}
+        self.file = None
+        self.dirty = None
         self._setup_ui()
 
     
@@ -46,6 +48,22 @@ class SoundEdit(QMainWindow):
         except Exception as e:
             return (False, str(e))
 
+
+    def _update_window_title(self) -> None:
+        """
+        Updates the window title reflecting currently open file and "dirty" status
+        """
+        if self.file is None:
+            self.setWindowTitle('Source Sound Editor - No File')
+        else:
+            self.setWindowTitle(f'Source Sound Editor - [{self.file}{"*" if self.dirty else ""}]')
+
+    def mark_dirty(self, dirty: bool) -> None:
+        """
+        Mark the document as a whole dirty
+        """
+        self.dirty = dirty
+        self._update_window_title()
 
     def open_tab(self, type: StackType, name: str) -> bool:
         """
@@ -64,20 +82,19 @@ class SoundEdit(QMainWindow):
         graph = SoundOperatorGraph(self)
         stacks = self.data['start_stacks' if type == StackType.Start else 'update_stacks']
         graph.from_dict(stacks[name], stacks)
-        
+
         w = QWidget(self)
+        w.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         w.setLayout(QHBoxLayout())
         w.layout().addWidget(graph.widget)
-        
+
+        graph.dirty_changed.connect(lambda dirty: self.mark_dirty(dirty))
+
         self.tabs.addTab(w, name)
         
         self.graphs[name] = graph
-        #graph.widget.raise_()
+        graph.widget.raise_()
         return True
-
-
-    def close_tab(self, type: StackType, name: str):
-        pass
 
     
     def _load_operator_stack(self, data: VDFDict) -> bool:
@@ -85,11 +102,9 @@ class SoundEdit(QMainWindow):
         self._populate_list()
         return True
 
-    
-    """
-    Populate the left bar list of operator stacks
-    """
+
     def _populate_list(self):
+        """Populate the left bar list of operator stacks"""
         if 'start_stacks' in self.data:
             for stackName in self.data['start_stacks'].keys():
                 stack = self.data['start_stacks'][stackName]
@@ -104,14 +119,13 @@ class SoundEdit(QMainWindow):
                 item.setData(0, Qt.ItemDataRole.UserRole, (StackType.Update, stackName))
 
 
-    """
-    Setup all UI widgets and such
-    """
     def _setup_ui(self):
+        """Setup the UI"""
         self._setup_menu()
         self._setup_stack_list()
         self._setup_tabs()
         self._setup_toolbox()
+        self._update_window_title()
 
 
     def _setup_toolbox(self):
@@ -125,11 +139,17 @@ class SoundEdit(QMainWindow):
     def _setup_tabs(self):
         self.tabs = QTabWidget(self)
         self.tabs.setTabsClosable(True)
+        self.tabs.tabCloseRequested.connect(self._close_tab)
         self.setCentralWidget(self.tabs)
         
         gettingStarted = QWidget(self)
         self.tabs.addTab(gettingStarted, 'Getting Started')
 
+    def _close_tab(self, tab: int):
+        """Close a tab and remove the widget"""
+        w = self.tabs.widget(tab)
+        self.tabs.removeTab(tab)
+        w.close()
 
     def _setup_stack_list(self):
         self.stackList = QTreeWidget(self)
@@ -148,10 +168,10 @@ class SoundEdit(QMainWindow):
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dock)
 
 
-    """
-    Setup the top menu bar (File, Edit, Help, etc)
-    """
     def _setup_menu(self):
+        """
+        Setup the top menu bar (File, Edit, Help, etc)
+        """
         self.fileMenu = self.menuBar().addMenu('File')
         self.fileMenu.addAction('Open').triggered.connect(self._on_open)
         self.fileMenu.addSeparator()
@@ -162,21 +182,37 @@ class SoundEdit(QMainWindow):
         self.helpMenu.addAction('About Qt').triggered.connect(QApplication.aboutQt)
 
 
-    """
-    Called when the user wants to open some item
-    """
     def _on_item_open(self, item: QTreeWidgetItem, col: int):
+        """Called when the user wants to open some item"""
         try:
             type, name = item.data(0, Qt.ItemDataRole.UserRole)
             self.open_tab(type, name)
         except Exception as e:
             raise e
 
+    def _ask_save(self) -> bool:
+        """
+        Pops up an "ask save" dialog and returns if the caller should continue with their logic
 
-    """
-    Called when we want to open a file
-    """
+        Returns
+        -------
+        bool :
+            True if the user saved/discarded their changes, or if the file isn't dirty, and you may continue
+        """
+        if not self.dirty:
+            return True
+
+        return QMessageBox.question(
+            self, 'Save Changes?', 'You have unsaved changes, would you like to save?',
+            QMessageBox.StandardButton.Save | QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Cancel
+        ) != QMessageBox.StandardButton.Cancel
+
     def _on_open(self, checked: bool):
+        """Called when we want to open a file"""
+
+        if not self._ask_save():
+            return
+
         s = QSettings()
         fileName, _ = QFileDialog.getOpenFileName(
             self, 'Open operator stack', s.value('FileOpenLastDir', os.getcwd()),
@@ -186,15 +222,17 @@ class SoundEdit(QMainWindow):
             return
 
         s.setValue('FileOpenLastDir', os.path.dirname(fileName))
+        self.file = None
 
         success,err = self.load_operator_stack(fileName)
         if not success:
             QMessageBox.warning(self, 'Could not load file',
                 f'Could not load operator stacks: {err}')
 
+        self.file = fileName
+        self._update_window_title()
 
-    """
-    Called when we want to exit
-    """
     def _on_exit(self, checked: bool):
-        QApplication.exit(0)
+        """Called when we want to exit"""
+        if self._ask_save():
+            QApplication.exit(0)

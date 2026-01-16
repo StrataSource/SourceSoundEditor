@@ -10,6 +10,7 @@ from NodeGraphQt import (
 from PySide6.QtWidgets import (
     QTabWidget, QHBoxLayout
 )
+from PySide6 import QtCore
 
 from vdf import VDFDict
 
@@ -40,7 +41,33 @@ class SoundOperatorGraph(NodeGraph):
         self.register_node(
             FloatConstNode
         )
+        
+        self._dirty = False
 
+        self.property_changed.connect(lambda: self.mark_dirty())
+        self.node_created.connect(lambda: self.mark_dirty())
+        self.nodes_deleted.connect(lambda: self.mark_dirty())
+        self.port_connected.connect(lambda: self.mark_dirty())
+        self.port_disconnected.connect(lambda: self.mark_dirty())
+
+    """Signaled when the dirty flag has been changed"""
+    dirty_changed = QtCore.Signal(bool)
+
+    def mark_dirty(self, dirty: bool = True, signal: bool = False) -> None:
+        """
+        Mark the dirty flag, signals the changed() event
+
+        Parameters
+        ----------
+        dirty : bool
+            True if dirty
+        """
+        self._dirty = dirty
+        self.dirty_changed.emit(dirty)
+
+    def dirty(self) -> bool:
+        """Returns the status of the dirty flag"""
+        return self._dirty
 
     def from_dict(self, opstack: VDFDict, all_opstacks: VDFDict):
         """
@@ -61,7 +88,6 @@ class SoundOperatorGraph(NodeGraph):
                     opstack[key] = (0,data)
                 else:
                     opstack[key] = data
-        print(opstack)
 
         # Pass 1: create all nodes
         for node in opstack.keys():
@@ -79,8 +105,6 @@ class SoundOperatorGraph(NodeGraph):
                 self._resolve(node, opstack)
 
         self.auto_layout_nodes()
-
-
 
     def _create_node(self, nodeName: str, opstack: VDFDict):
         """
@@ -122,7 +146,6 @@ class SoundOperatorGraph(NodeGraph):
                 continue
             n.set_widget_value(kv['name'], node[kv['name']])
 
-
     def _resolve(self, nodeName: str, opstack: VDFDict):
         """
         Resolves inter-node references
@@ -152,8 +175,7 @@ class SoundOperatorGraph(NodeGraph):
                 i,
                 push_undo=False
             )
-            
-            
+
     def _split_input_str(self, value: str) -> Tuple[str, str]: # (nodeName, outputName)
         value = value.removeprefix('@')
         vals = value.split('.')
