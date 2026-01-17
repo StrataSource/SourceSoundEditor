@@ -104,7 +104,7 @@ class OperatorNode(BaseNode):
         type : str
             Name of the backing node type, looked up within the manifest
         """
-        layout = manifest.get_current().get_node_types()[type]
+        layout = manifest.current().node_types()[type]
         self.type = type
         
         self.in_ports = {}

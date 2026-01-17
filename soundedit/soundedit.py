@@ -37,7 +37,7 @@ class SoundEdit(QMainWindow):
         self.dirty = None
         self._setup_ui()
 
-    
+
     """
     Load a sound operator stack
     """

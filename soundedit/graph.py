@@ -1,15 +1,11 @@
-"""
-
-Defines a visual representation of a sound operator stack
-
-"""
-
 from NodeGraphQt import (
-    NodeGraph, BaseNode, Port
+    NodeGraph, BaseNode, Port,
+    NodeGraphMenu, NodesMenu
 )
 from PySide6.QtWidgets import (
-    QTabWidget, QHBoxLayout
+    QTabWidget, QHBoxLayout, QMenu
 )
+from PySide6.QtGui import QCursor
 from PySide6 import QtCore
 
 from vdf import VDFDict
@@ -19,7 +15,9 @@ from . nodes import (
     OperatorNode, FloatConstNode
 )
 
-from typing import Tuple, TypedDict
+from typing import (
+    Tuple, TypedDict, Dict, Any
+)
 
 
 class SoundOperatorGraph(NodeGraph):
@@ -30,10 +28,10 @@ class SoundOperatorGraph(NodeGraph):
     
     def __init__(self, parent):
         super().__init__()
-        self.nodes: dict = {}
+        self.nodes: Dict[str, OperatorNode] = {}
 
         # Register all node types
-        for type in manifest.current.get_node_types().keys():
+        for type in manifest.node_types().keys():
             self.register_node(
                 OperatorNode(type).__class__
             )
@@ -43,12 +41,17 @@ class SoundOperatorGraph(NodeGraph):
         )
         
         self._dirty = False
+        
+        # Configure our context menus. These are static for some reason
+        self._build_graph_context_menu()
+        self._build_node_context_menu()
 
         self.property_changed.connect(lambda: self.mark_dirty())
         self.node_created.connect(lambda: self.mark_dirty())
         self.nodes_deleted.connect(lambda: self.mark_dirty())
         self.port_connected.connect(lambda: self.mark_dirty())
         self.port_disconnected.connect(lambda: self.mark_dirty())
+        #self.context_menu_prompt.connect(self._show_context_menu)
 
     """Signaled when the dirty flag has been changed"""
     dirty_changed = QtCore.Signal(bool)
@@ -106,6 +109,40 @@ class SoundOperatorGraph(NodeGraph):
 
         self.auto_layout_nodes()
 
+    def make_node(self, node_type: str, name: str | None = None) -> OperatorNode:
+        """
+        Makes a new node, setting defaults as required
+        
+        Parameters
+        ----------
+        node_type : str
+            Node type, shorthand version (i.e. math_clamp)
+        name : str | None
+            Name of the node when added to the graph (i.e. my_node)
+            If not provided, a unique name will be generated based on the operator type
+            
+        Returns
+        -------
+        OperatorNode :
+            New node
+        """
+        if name is None:
+            name = self.get_unique_name(node_type)
+
+        n: OperatorNode = self.create_node(
+            f'io.soundedit.operators.Operator_{node_type}',
+            name=name
+        )
+        n.set_type(node_type)
+        self.nodes[name] = n
+        self.set_defaults(n)
+        return n
+
+    def set_defaults(self, node: OperatorNode) -> None:
+        """Set default keyvalues on the node"""
+        for kv in manifest.current().keyvalue_desc(node.type):
+            node.set_widget_value(kv['name'], kv['default'])
+
     def _create_node(self, nodeName: str, opstack: VDFDict):
         """
         Creates a new named node from existing operator stack data
@@ -119,16 +156,11 @@ class SoundOperatorGraph(NodeGraph):
         """
         node = opstack[nodeName]
         operator = node['operator']
-        n: OperatorNode = self.create_node(
-            f'io.soundedit.operators.Operator_{operator}',
-            name=operator
-        )
-        n.set_type(operator)
-        self.nodes[nodeName] = n
-        
+        n = self.make_node(operator, operator)
+
         # Create any constant nodes
         constNodeNum = 0
-        for input in manifest.get_current().get_input_desc(operator):
+        for input in manifest.current().input_desc(operator):
             inpName = input['name']
             if not inpName in node:
                 continue
@@ -141,7 +173,7 @@ class SoundOperatorGraph(NodeGraph):
             n.set_input_const(inpName, value)
             
         # Set keyvalues
-        for kv in manifest.get_current().get_keyvalue_desc(operator):
+        for kv in manifest.current().keyvalue_desc(operator):
             if kv['name'] not in node:
                 continue
             n.set_widget_value(kv['name'], node[kv['name']])
@@ -160,7 +192,7 @@ class SoundOperatorGraph(NodeGraph):
         operator = opstack[nodeName]['operator']
         node = opstack[nodeName]
         
-        for input in manifest.get_current().get_input_desc(operator):
+        for input in manifest.current().input_desc(operator):
             inputName = input['name']
             if not inputName in node or not node[inputName].startswith('@'):
                 continue
@@ -180,3 +212,70 @@ class SoundOperatorGraph(NodeGraph):
         value = value.removeprefix('@')
         vals = value.split('.')
         return (vals[0], vals[1])
+
+    def remove_node(self, name: str) -> bool:
+        """
+        Remove a node by name
+        
+        Parameters
+        ----------
+        name : str
+            Remove a unique node by its name
+        
+        Returns
+        -------
+        bool :
+            True on success
+        """
+        if name not in self.nodes:
+            return False
+        n = self.nodes.pop(name)
+        self.delete_node(n)
+        return True
+
+    def _add_node(self, type: str) -> None:
+        node = self.make_node(type, type)
+        self.add_node(
+            node, QCursor.pos()
+        )
+
+    def _build_graph_context_menu(self):
+        """Add new entries to the graph context menu"""
+        menu: NodeGraphMenu = self.get_context_menu('graph')
+
+        # Add node menu
+        m = menu.add_menu('Add Node')
+        subs = {x: m.add_menu(x) for x in manifest.current().categories()}
+        for k, v in manifest.node_types().items():
+            if k == '__base': continue # Skip the "base" node
+            x = subs[v['category']] if 'category' in v else m
+            x.add_command(
+                k, lambda graph: self._add_node(k)
+            )
+
+        menu.add_command(
+            'Auto-layout',
+            lambda graph: graph.auto_layout_nodes()
+        )
+
+    def _build_node_context_menu(self):
+        """Add new entries to the node context menus"""
+        menu: NodesMenu = self.get_context_menu('nodes')
+        menu.add_command(
+            'Remove Node',
+            lambda graph, node: graph.remove_node(node.name()),
+            node_class=BaseNode
+        )
+        
+        def do_reset_def(graph, node):
+            if getattr(node, '__identifier__', None) != OperatorNode.__identifier__:
+                return
+            graph.begin_undo('Reset to defaults')
+            graph.set_defaults(node)
+            graph.end_undo()
+
+        menu.add_command(
+            'Reset to Defaults',
+            lambda graph, node: do_reset_def(graph, node),
+            node_class=BaseNode
+        )
