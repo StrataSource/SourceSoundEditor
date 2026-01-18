@@ -37,11 +37,10 @@ class SoundEdit(QMainWindow):
         self.dirty = None
         self._setup_ui()
 
-
-    """
-    Load a sound operator stack
-    """
     def load_operator_stack(self, file: str) -> Tuple[bool,str]:
+        """
+        Load a sound operator stack
+        """
         try:
             with open(file, 'r') as fp:
                 return (self._load_operator_stack(vdf.load(fp, mapper=VDFDict)), '')
@@ -118,23 +117,12 @@ class SoundEdit(QMainWindow):
                 item.setText(0, stackName)
                 item.setData(0, Qt.ItemDataRole.UserRole, (StackType.Update, stackName))
 
-
     def _setup_ui(self):
         """Setup the UI"""
         self._setup_menu()
         self._setup_stack_list()
         self._setup_tabs()
-        self._setup_toolbox()
         self._update_window_title()
-
-
-    def _setup_toolbox(self):
-        #self.toolbox = NodesPaletteWidget(self)
-        #dock = QDockWidget('Toolbox')
-        #dock.setWidget(self.toolbox)
-        #self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock)
-        pass
-
 
     def _setup_tabs(self):
         self.tabs = QTabWidget(self)
@@ -167,6 +155,22 @@ class SoundEdit(QMainWindow):
         dock.setWidget(self.stackList)
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dock)
 
+    def _update_recents_menu(self):
+        """Update entries on the recent files menu"""
+        s = QSettings()
+        recents = s.value('RecentFiles', [''])
+        if isinstance(recents, list):
+            recents.reverse()
+        else:
+            recents = []
+
+        # Remove previously existing actions
+        for a in self.recents_menu.actions():
+            self.recents_menu.removeAction(a)
+
+        for l in recents:
+            if len(l) > 0:
+                self.recents_menu.addAction(l).triggered.connect(lambda c, x=l: self._open_file(x))
 
     def _setup_menu(self):
         """
@@ -174,6 +178,8 @@ class SoundEdit(QMainWindow):
         """
         self.fileMenu = self.menuBar().addMenu('File')
         self.fileMenu.addAction('Open').triggered.connect(self._on_open)
+        self.recents_menu = self.fileMenu.addMenu('Recent Files')
+        self._update_recents_menu()
         self.fileMenu.addSeparator()
         self.fileMenu.addAction('Exit').triggered.connect(self._on_exit)
 
@@ -207,6 +213,58 @@ class SoundEdit(QMainWindow):
             QMessageBox.StandardButton.Save | QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Cancel
         ) != QMessageBox.StandardButton.Cancel
 
+    def _add_recent_file(self, file: str):
+        """Add an entry to the recent files list"""
+        s = QSettings()
+        l = s.value('RecentFiles', [''])
+        if not isinstance(l, list): # Safeguard, should never happen unless something is really borked
+            l = [''] # Need to force a list of at least 2 length, otherwise list gets turned into a single string...
+        while file in l: l.remove(file)
+        l.append(file)
+        s.setValue('RecentFiles', l)
+        
+    def _remove_recent_file(self, file: str):
+        """Remove recent file from list"""
+        s = QSettings()
+        l = s.value('RecentFiles', ['', ''])
+        if isinstance(l, list):
+            l.remove(file)
+        else:
+            l = ['', '']
+        s.setValue('RecentFiles', l)
+        
+    def _open_file(self, file: str) -> bool:
+        """
+        Open a specific file
+        On success, adds the file to the 'recent files' list, updates the window title.
+        Shows a message box on failure, and removes the entry from the recent files list.
+
+        Returns
+        -------
+        bool :
+            True on success
+        """
+
+        if not self._ask_save():
+            return False
+
+        self.file = None
+
+        success, err = self.load_operator_stack(file)
+        if not success:
+            self._remove_recent_file(file)
+            QMessageBox.warning(
+                self, 'Could not load file',
+                f'Could not load operator stacks: {err}'
+            )
+            return False
+
+        self.file = file
+        self._add_recent_file(file)
+        self._update_window_title()
+        self._update_recents_menu()
+        return True
+
     def _on_open(self, checked: bool):
         """Called when we want to open a file"""
 
@@ -221,16 +279,7 @@ class SoundEdit(QMainWindow):
         if len(fileName) == 0:
             return
 
-        s.setValue('FileOpenLastDir', os.path.dirname(fileName))
-        self.file = None
-
-        success,err = self.load_operator_stack(fileName)
-        if not success:
-            QMessageBox.warning(self, 'Could not load file',
-                f'Could not load operator stacks: {err}')
-
-        self.file = fileName
-        self._update_window_title()
+        self._open_file(fileName)
 
     def _on_exit(self, checked: bool):
         """Called when we want to exit"""

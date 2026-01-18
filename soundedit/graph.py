@@ -1,10 +1,12 @@
 from NodeGraphQt import (
     NodeGraph, BaseNode, Port,
-    NodeGraphMenu, NodesMenu
+    NodeGraphMenu, NodesMenu,
 )
+from NodeGraphQt.widgets.node_graph import NodeGraphWidget
 from PySide6.QtWidgets import (
     QTabWidget, QHBoxLayout, QMenu
 )
+from PySide6.QtCore import QObject
 from PySide6.QtGui import QCursor
 from PySide6 import QtCore
 
@@ -20,38 +22,37 @@ from typing import (
 )
 
 
-class SoundOperatorGraph(NodeGraph):
+class SoundOperatorGraph(QObject):
     """
     Main graph for the sound editor
     Registers all required node types and manages the editor
     """
-    
+
     def __init__(self, parent):
         super().__init__()
         self.nodes: Dict[str, OperatorNode] = {}
-
+        self.graph = NodeGraph(self)
         # Register all node types
         for type in manifest.node_types().keys():
-            self.register_node(
+            self.graph.register_node(
                 OperatorNode(type).__class__
             )
-            
-        self.register_node(
+
+        self.graph.register_node(
             FloatConstNode
         )
-        
+
         self._dirty = False
-        
+
         # Configure our context menus. These are static for some reason
         self._build_graph_context_menu()
         self._build_node_context_menu()
 
-        self.property_changed.connect(lambda: self.mark_dirty())
-        self.node_created.connect(lambda: self.mark_dirty())
-        self.nodes_deleted.connect(lambda: self.mark_dirty())
-        self.port_connected.connect(lambda: self.mark_dirty())
-        self.port_disconnected.connect(lambda: self.mark_dirty())
-        #self.context_menu_prompt.connect(self._show_context_menu)
+        self.graph.property_changed.connect(lambda: self.mark_dirty())
+        self.graph.node_created.connect(lambda: self.mark_dirty())
+        self.graph.nodes_deleted.connect(lambda: self.mark_dirty())
+        self.graph.port_connected.connect(lambda: self.mark_dirty())
+        self.graph.port_disconnected.connect(lambda: self.mark_dirty())
 
     """Signaled when the dirty flag has been changed"""
     dirty_changed = QtCore.Signal(bool)
@@ -67,6 +68,10 @@ class SoundOperatorGraph(NodeGraph):
         """
         self._dirty = dirty
         self.dirty_changed.emit(dirty)
+
+    @property
+    def widget(self) -> NodeGraphWidget:
+        return self.graph.widget
 
     def dirty(self) -> bool:
         """Returns the status of the dirty flag"""
@@ -107,7 +112,7 @@ class SoundOperatorGraph(NodeGraph):
             if isinstance(value, dict):
                 self._resolve(node, opstack)
 
-        self.auto_layout_nodes()
+        self.graph.auto_layout_nodes()
 
     def make_node(self, node_type: str, name: str | None = None) -> OperatorNode:
         """
@@ -127,9 +132,9 @@ class SoundOperatorGraph(NodeGraph):
             New node
         """
         if name is None:
-            name = self.get_unique_name(node_type)
+            name = self.graph.get_unique_name(node_type)
 
-        n: OperatorNode = self.create_node(
+        n: OperatorNode = self.graph.create_node(
             f'io.soundedit.operators.Operator_{node_type}',
             name=name
         )
@@ -230,18 +235,18 @@ class SoundOperatorGraph(NodeGraph):
         if name not in self.nodes:
             return False
         n = self.nodes.pop(name)
-        self.delete_node(n)
+        self.graph.delete_node(n)
         return True
 
     def _add_node(self, type: str) -> None:
         node = self.make_node(type, type)
-        self.add_node(
+        self.graph.add_node(
             node, QCursor.pos()
         )
 
     def _build_graph_context_menu(self):
         """Add new entries to the graph context menu"""
-        menu: NodeGraphMenu = self.get_context_menu('graph')
+        menu: NodeGraphMenu = self.graph.get_context_menu('graph')
 
         # Add node menu
         m = menu.add_menu('Add Node')
@@ -260,7 +265,7 @@ class SoundOperatorGraph(NodeGraph):
 
     def _build_node_context_menu(self):
         """Add new entries to the node context menus"""
-        menu: NodesMenu = self.get_context_menu('nodes')
+        menu: NodesMenu = self.graph.get_context_menu('nodes')
         menu.add_command(
             'Remove Node',
             lambda graph, node: graph.remove_node(node.name()),
